@@ -1,0 +1,30 @@
+{
+  "name": "audio-streamer-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "expo": "^54.0.0",
+    "expo-asset": "~12.0.13",
+    "expo-camera": "~17.0.10",
+    "expo-status-bar": "~3.0.9",
+    "lucide-react-native": "^1.14.0",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-svg": "15.12.1",
+    "react-native-track-player": "^4.1.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.10",
+    "babel-preset-expo": "~54.0.10",
+    "patch-package": "^8.0.1",
+    "typescript": "^5.6.3"
+  },
+  "postinstall": "patch-package"
+}

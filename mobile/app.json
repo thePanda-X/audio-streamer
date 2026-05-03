@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Audio Streamer",
+    "slug": "audio-streamer-mobile",
+    "version": "1.0.0",
+    "icon": "./icon.png",
+    "newArchEnabled": false,
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "audio"
+        ],
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        },
+        "NSCameraUsageDescription": "Allow Audio Streamer to scan the server QR code.",
+        "NSLocalNetworkUsageDescription": "This app connects to your Bun audio streamer on the local network."
+      }
+    },
+    "android": {
+      "usesCleartextTraffic": true,
+      "permissions": [
+        "WAKE_LOCK",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ],
+      "package": "com.anonymous.audiostreamermobile"
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-camera"
+    ]
+  }
+}
