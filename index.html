@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Audio Stream</title>
+  <style>
+    body {
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #111;
+      color: #eee;
+    }
+    button {
+      padding: 16px 40px;
+      font-size: 48px;
+      font-family: monospace;
+      background: #222;
+      color: #eee;
+      border: 1px solid #444;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:hover { background: #333; }
+    button:disabled { opacity: 0.4; cursor: default; }
+    #status {
+      margin-top: 16px;
+      font-size: 24px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <button id="btn">▶ Start Listening</button>
+  <div id="status">disconnected</div>
+
+  <script>
+    const btn = document.getElementById('btn');
+    const status = document.getElementById('status');
+
+    let audioCtx = null;
+    let ws = null;
+    let format = null;
+
+    let nextPlayTime = 0;
+
+    const BUFFER_AHEAD = 0.1;
+
+    function setStatus(msg) {
+      status.textContent = msg;
+    }
+
+    function int16ToFloat32(buffer) {
+      const int16 = new Int16Array(buffer);
+      const float32 = new Float32Array(int16.length);
+      for (let i = 0; i < int16.length; i++) {
+        float32[i] = int16[i] / 32768;
+      }
+      return float32;
+    }
+
+    function scheduleChunk(audioBuffer) {
+      const source = audioCtx.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioCtx.destination);
+
+      const when = Math.max(audioCtx.currentTime + BUFFER_AHEAD, nextPlayTime);
+      source.start(when);
+      nextPlayTime = when + audioBuffer.duration;
+    }
+
+    function handleChunk(arrayBuffer) {
+      if (!format) return;
+
+      const float32 = int16ToFloat32(arrayBuffer);
+      const samplesPerChannel = float32.length / format.channels;
+
+      const audioBuffer = audioCtx.createBuffer(
+        format.channels,
+        samplesPerChannel,
+        format.sampleRate
+      );
+
+      for (let ch = 0; ch < format.channels; ch++) {
+        const channelData = audioBuffer.getChannelData(ch);
+        for (let i = 0; i < samplesPerChannel; i++) {
+          channelData[i] = float32[i * format.channels + ch];
+        }
+      }
+
+      scheduleChunk(audioBuffer);
+    }
+
+    function connect() {
+      audioCtx = new AudioContext();
+      nextPlayTime = 0;
+
+      ws = new WebSocket(`ws://${location.host}/stream`);
+      ws.binaryType = 'arraybuffer';
+      setStatus('connecting...');
+
+      ws.onopen = () => setStatus('connected — buffering...');
+
+      ws.onmessage = (event) => {
+        if (typeof event.data === 'string') {
+          // First message is the format descriptor
+          format = JSON.parse(event.data);
+          setStatus(`streaming — ${format.sampleRate}Hz ${format.channels}ch`);
+          return;
+        }
+        handleChunk(event.data);
+      };
+
+      ws.onclose = () => {
+        setStatus('disconnected');
+        btn.textContent = '▶ Start Listening';
+        btn.disabled = false;
+      };
+
+      ws.onerror = () => setStatus('connection error');
+    }
+
+    function disconnect() {
+      ws?.close();
+      audioCtx?.close();
+      audioCtx = null;
+      ws = null;
+      format = null;
+      nextPlayTime = 0;
+    }
+
+    btn.addEventListener('click', () => {
+      if (ws) {
+        disconnect();
+        btn.textContent = '▶ Start Listening';
+      } else {
+        connect();
+        btn.textContent = '■ Stop';
+      }
+    });
+  </script>
+</body>
+</html>

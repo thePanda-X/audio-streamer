@@ -1,0 +1,17 @@
+{
+  "name": "audio-streamer",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/qrcode-terminal": "^0.12.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "native-audio-node": "^0.3.5",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
