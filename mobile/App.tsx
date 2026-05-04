@@ -284,6 +284,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "#111",
+    paddingTop: 20,
   },
   container: {
     flex: 1,
@@ -324,7 +325,7 @@ const styles = StyleSheet.create({
   },
   status: {
     color: "#888",
-    fontSize: 24,
+    fontSize: 13,
     lineHeight: 30,
     textAlign: "center",
     marginBottom: 12,
