@@ -32,7 +32,15 @@
     "plugins": [
       "expo-asset",
       "expo-camera",
-      "./app.plugin.js"
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true,
+            "networkSecurityConfig": true
+          }
+        }
+      ]
     ]
   }
 }

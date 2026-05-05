@@ -5,13 +5,16 @@
   "main": "index.js",
   "scripts": {
     "start": "expo start --dev-client",
+    "prebuild": "npx expo prebuild --clean && node -e \"const fs=require('fs');const p='android/app/src/main/res/xml';fs.mkdirSync(p,{recursive:true});fs.writeFileSync(p+'/network_security_config.xml','<?xml version=\\\"1.0\\\" encoding=\\\"utf-8\\\"?>\\n<network-security-config>\\n    <base-config cleartextTrafficPermitted=\\\"true\\\">\\n        <trust-anchors>\\n            <certificates src=\\\"system\\\" />\\n        </trust-anchors>\\n    </base-config>\\n    <domain-config cleartextTrafficPermitted=\\\"true\\\">\\n        <domain includeSubdomains=\\\"true\\\">192.168.0.0</domain>\\n        <domain includeSubdomains=\\\"true\\\">192.168.1.0</domain>\\n        <domain includeSubdomains=\\\"true\\\">10.0.0.0</domain>\\n        <domain includeSubdomains=\\\"true\\\">localhost</domain>\\n    </domain-config>\\n</network-security-config>');console.log('Created network_security_config.xml')\"",
     "android": "expo run:android",
+    "android:release": "expo run:android --variant release",
     "ios": "expo run:ios"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
     "expo": "^54.0.0",
     "expo-asset": "~12.0.13",
+    "expo-build-properties": "^55.0.13",
     "expo-camera": "~17.0.10",
     "expo-status-bar": "~3.0.9",
     "lucide-react-native": "^1.14.0",
