@@ -6,6 +6,9 @@ import TrackPlayer, {
 import type { AddTrack } from "react-native-track-player";
 
 const LIVE_TRACK_ID = "bun-live-stream";
+const LIVE_MIN_BUFFER_SECONDS = 1;
+const LIVE_MAX_BUFFER_SECONDS = 4;
+const LIVE_PLAY_BUFFER_SECONDS = 0.25;
 
 let setupPromise: Promise<void> | null = null;
 
@@ -28,10 +31,10 @@ export async function ensurePlayerSetup(): Promise<void> {
       await TrackPlayer.setupPlayer({
         autoHandleInterruptions: true,
         iosCategory: IOSCategory.Playback,
-        minBuffer: 15,
-        maxBuffer: 60,
+        minBuffer: LIVE_MIN_BUFFER_SECONDS,
+        maxBuffer: LIVE_MAX_BUFFER_SECONDS,
         backBuffer: 0,
-        playBuffer: 2.5,
+        playBuffer: LIVE_PLAY_BUFFER_SECONDS,
       });
 
       await TrackPlayer.updateOptions({
